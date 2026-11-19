@@ -1,4 +1,6 @@
-build*/
-deps/
+# Per-plugin build output and fetched dependencies
+*/build*/
+*/deps/
+.DS_Store
 .vscode/
 .idea/
