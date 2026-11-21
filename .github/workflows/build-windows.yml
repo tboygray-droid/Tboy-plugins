@@ -1,0 +1,57 @@
+# Builds TgsoundsEQ for Windows (VST3 + Standalone) and publishes it as a downloadable artifact.
+# Download: GitHub repo -> Actions -> "Build TgsoundsEQ (Windows)" -> latest run -> Artifacts.
+name: Build TgsoundsEQ (Windows)
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'TgsoundsEQ/**', '.github/workflows/build-windows.yml' ]
+  workflow_dispatch:   # "Run workflow" button in the Actions tab
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: TgsoundsEQ
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (Visual Studio 2022, x64)
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DTG_BUILD_TESTS=ON
+
+      - name: Build plugin (VST3 + Standalone)
+        run: cmake --build build --config Release --parallel --target TgsoundsEQ_VST3 TgsoundsEQ_Standalone
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $out = "${{ github.workspace }}\package"
+          New-Item -ItemType Directory -Force -Path $out | Out-Null
+          Copy-Item -Recurse "build\TgsoundsEQ_artefacts\Release\VST3\TgsoundsEQ.vst3" $out
+          Copy-Item "build\TgsoundsEQ_artefacts\Release\Standalone\TgsoundsEQ.exe" $out
+          @"
+          TgsoundsEQ for Windows
+          ======================
+          Install in Cubase:
+          1. Close Cubase.
+          2. Copy the folder "TgsoundsEQ.vst3" into:  C:\Program Files\Common Files\VST3
+             (Windows will ask for administrator permission - click Continue.)
+          3. Start Cubase. It scans new plugins at startup. TgsoundsEQ appears under Tgsounds / EQ.
+             If it does not show: Studio > VST Plug-in Manager > Update (circular arrows) or check the Blocklist.
+
+          TgsoundsEQ.exe is a standalone version that runs without a DAW.
+          "@ | Out-File -Encoding utf8 "$out\INSTALL.txt"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TgsoundsEQ-Windows-VST3
+          path: package
+          if-no-files-found: error
+
+      - name: Run tests
+        run: |
+          cmake --build build --config Release --parallel --target TgsoundsEQTests
+          ctest --test-dir build -C Release --output-on-failure

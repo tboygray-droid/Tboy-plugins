@@ -20,6 +20,14 @@ a floating band panel and a live spectrum analyzer. All code, artwork and brandi
 | GUI | Resizable, OpenGL, v-blank driven (60 fps); ±3/6/12/30 dB scales; piano overlay; draw-a-curve; collision warnings; solo (listen) |
 | Workflow | Undo/Redo, A/B + copy, preset browser (22 factory presets + user presets), MIDI Learn on every parameter, Match EQ, auto gain, output gain/pan, polarity, meters |
 
+## Installing in Cubase (Windows)
+
+No compiler needed: GitHub builds the plugin automatically.
+1. Open the repository on GitHub, go to **Actions**, and open the latest green **Build TgsoundsEQ (Windows)** run.
+2. Under **Artifacts**, download **TgsoundsEQ-Windows-VST3** and unzip it.
+3. Close Cubase. Copy the `TgsoundsEQ.vst3` folder into `C:\Program Files\Common Files\VST3`.
+4. Start Cubase. TgsoundsEQ appears under **Tgsounds**. If not, open **Studio > VST Plug-in Manager**, rescan and check the blocklist.
+
 ## Building
 
 TgsoundsEQ lives in the `TgsoundsEQ/` folder of the [Tboy-plugins](https://github.com/tboygray-droid/Tboy-plugins)
