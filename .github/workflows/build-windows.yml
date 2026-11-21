@@ -18,8 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure (Visual Studio 2022, x64)
-        run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DTG_BUILD_TESTS=ON
+      - name: Configure (newest installed Visual Studio, x64)
+        run: cmake -B build -A x64 -DTG_BUILD_TESTS=ON
 
       - name: Build plugin (VST3 + Standalone)
         run: cmake --build build --config Release --parallel --target TgsoundsEQ_VST3 TgsoundsEQ_Standalone
